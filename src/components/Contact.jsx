@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
+import { send } from '@emailjs/browser';
 import './Contact.css';
+
+const SERVICE_ID = 'service_23';
+const TEMPLATE_ID = 'template_7t4sbyj';
+const PUBLIC_KEY = 'n9tGlkTmbi8AlDYJt';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +12,7 @@ const Contact = () => {
     email: '',
     message: ''
   });
+  const [statusMessage, setStatusMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -17,8 +23,39 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send email)
-    alert('Form submitted! (This is a demo)');
+    setStatusMessage('Sending...');
+
+    const templateParams = {
+      from_name: formData.name,
+      user_name: formData.name,
+      sender_name: formData.name,
+      from_email: formData.email,
+      user_email: formData.email,
+      sender_email: formData.email,
+      reply_to: formData.email,
+      message: formData.message,
+      user_message: formData.message,
+      contact_message: formData.message,
+      // Provide a fallback if message is empty
+      message_fallback: formData.message || 'No message provided',
+      subject: 'New message from portfolio site'
+    };
+
+    console.log('Sending EmailJS payload:', templateParams);
+
+    send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+      .then(() => {
+        setStatusMessage('Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+      })
+      .catch((error) => {
+        console.error('EmailJS error:', error);
+        const errorMsg =
+          error?.text ||
+          error?.statusText ||
+          'Failed to send message. Please check your EmailJS template and service settings.';
+        setStatusMessage(`Error: ${errorMsg}`);
+      });
   };
 
   return (
@@ -69,6 +106,7 @@ const Contact = () => {
               ></textarea>
             </div>
             <button type="submit" className="btn-primary">Send</button>
+            {statusMessage && <p className="form-status">{statusMessage}</p>}
           </form>
         </div>
       </div>

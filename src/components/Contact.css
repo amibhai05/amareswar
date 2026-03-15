@@ -97,6 +97,12 @@
   box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
+.form-status {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: #00d4ff;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
